@@ -3,32 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerC : MonoBehaviour
+public class PlayerC : CubeC
 {
     [SerializeField] GameObject showCube, platformPrefab, gamePlayUi, gameOverUi, menuUi;
     [SerializeField] float cubeSpeed = 1.7f, cubeRotationSpeed = 150f, platformSpeed = 21f;
     [SerializeField] Transform platform, platformOld;
     [SerializeField] Text scoreText;
 
-    // cube
-    private Vector3Int directionToMove;
-    private Quaternion rotationToMake;
     // platforms
-    private Vector3 platformDown, platformUp, platformOldDown;
+    private Vector3 platformOldDown; //platformDown, platformUp, 
     private Vector3 pl, plOld;
     private Dictionary<Vector3Int, GameObject> platforms = new Dictionary<Vector3Int, GameObject>();
 
-    private bool isMoving, moveBackwards; // do we move the MainCube now, direction 
+    private bool moveBackwards; // do we move the MainCube now, direction  //private bool isMoving,
     private ChaseCubeC chaseCube;
     private int score;
 
 
     void Start()
     {
-        directionToMove = new Vector3Int(1, 1, 1);
+        directionToMove = Vector3Int.FloorToInt(transform.position);
         rotationToMake = transform.rotation;
-        platformDown = new Vector3(0, -16, 0);
-        platformUp = new Vector3(0, -6, 0);
         platformOldDown = new Vector3(0, -0.5f, 0);
         pl = platform.position;
         platforms.Add(directionToMove, platform.gameObject);
@@ -39,35 +34,19 @@ public class PlayerC : MonoBehaviour
     {
         if (!isMoving)
         {
-            Vector3Int dir = new Vector3Int();
-            switch (direction)
-            {
-                case 0:
-                    dir = Vector3Int.forward;
-                    break;
-                case 1:
-                    dir = Vector3Int.right;
-                    break;
-                case 2:
-                    dir = Vector3Int.back;
-                    break;
-                case 3:
-                    dir = Vector3Int.left;
-                    break;
-            }
-            Vector3Int vector = MainManager.Instance.VectorMine(new Vector3Int(System.Convert.ToInt32(transform.position.x), 1, System.Convert.ToInt32(transform.position.z)) + dir);
+            Vector3Int vector = Vector3Int.FloorToInt(transform.position + directions[direction]);
 
-            if (vector != Vector3Int.zero)
+            if(!MainManager.Instance.IsContainsVector(vector)) // если нет нужного вектора, мы не можем туда наступать -> Game Over
+                GameOver();
+            else                          // если есть, можем идти
             {
                 chaseCube.ShowMoves();
                 directionToMove = vector;
-                SetRotation(direction);
+                rotationToMake = SetRotation(direction);
                 score++;
                 scoreText.text = score.ToString();
                 ShowMoves();
             }
-            else
-                GameOver();
         }
     }
     void GameOver()
@@ -93,25 +72,6 @@ public class PlayerC : MonoBehaviour
     public void RestartGame()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-    }
-
-    void SetRotation(int r)
-    {
-        switch (r)
-        {
-            case 0:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x + 90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                break;
-            case 1:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - 90);
-                break;
-            case 2:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x - 90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                break;
-            case 3:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + 90);
-                break;
-        }
     }
 
     public void ShowMoves()

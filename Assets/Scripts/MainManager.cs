@@ -10,11 +10,13 @@ public class MainManager : MonoBehaviour
 
     private void Start()
     {
-        positions = new List<Vector3Int>();
-        positions.Add(new Vector3Int(1,1,1));
-        positions.Add(new Vector3Int(1,1,2));
-        positions.Add(new Vector3Int(1,1,3));
-        positions.Add(new Vector3Int(1,1,4));
+        positions = new List<Vector3Int>
+        {
+            new Vector3Int(1, 1, 1),
+            new Vector3Int(1, 1, 2),
+            new Vector3Int(1, 1, 3),
+            new Vector3Int(1, 1, 4)
+        };
         //positions.Add(new Vector3Int(1,1,5));
     }
 
@@ -22,24 +24,30 @@ public class MainManager : MonoBehaviour
     {
         positions.Add(pos);
     }
-
-    public Vector3Int VectorMine(Vector3 pos)
+    public bool IsContainsVector(Vector3Int vec)
     {
-        Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
-        if (!positions.Contains(vec))
-            return Vector3Int.zero;             // если в массиве нет такого вектора, возвращаем нули
-        else
-            return vec;                         // если есть, возвращаем вектор в виде Vector3Int
-    }
-
-    public Vector3Int VectorShow(Vector3 pos)
-    {
-        Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
         if (positions.Contains(vec))
-            return Vector3Int.zero;             // для другого кубика делаем наоборот
+            return true;
         else
-            return vec;        
+            return false;
     }
+    //public Vector3Int VectorMine(Vector3 pos)
+    //{
+    //    Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
+    //    if (!positions.Contains(vec))
+    //        return Vector3Int.zero;             // если в массиве нет такого вектора, возвращаем нули
+    //    else
+    //        return vec;                         // если есть, возвращаем вектор в виде Vector3Int
+    //}
+
+    //public Vector3Int VectorShow(Vector3 pos)
+    //{
+    //    Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
+    //    if (positions.Contains(vec))
+    //        return Vector3Int.zero;             // для другого кубика делаем наоборот
+    //    else
+    //        return vec;        
+    //}
 
     private void Awake()
     {

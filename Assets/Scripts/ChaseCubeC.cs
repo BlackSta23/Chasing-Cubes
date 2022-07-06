@@ -1,79 +1,36 @@
 
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class ChaseCubeC : MonoBehaviour
+public class ChaseCubeC : CubeC
 {
     [SerializeField] Transform platform1, platform2;
     [SerializeField] int maxCount = 5; // максимальное количество движений за один ход
     [SerializeField] float cubeSpeed = 1.7f, cubeRotationSpeed = 120f, platformSpeed = 21f;
 
-    // cube
-    private Vector3Int[] directions = new Vector3Int[4];
-    private Vector3Int directionToMove;
-    private Quaternion rotationToMake;
     // platforms
-    private Vector3 platformDown, platformUp, pl1dir, pl2dir;
+    private Vector3 pl1dir, pl2dir; //platformDown, platformUp
     private bool platformDirection; // false = 1 up, 2 down; true = 1 down, 2 up
-    private bool isMoving; // do we move the ShowCube now
     void Start()
     {
-        directions[0] = Vector3Int.forward;
-        directions[1] = Vector3Int.left;
-        directions[2] = Vector3Int.right;
-        directions[3] = Vector3Int.back;
         pl1dir = platform1.transform.position;
         pl2dir = platform2.transform.position;
-        directionToMove = new Vector3Int(1, 1, 3);
+        directionToMove = Vector3Int.FloorToInt(transform.position);
         rotationToMake = transform.rotation;
-        platformDown = new Vector3(0, -16, 0);
-        platformUp = new Vector3(0, -6, 0);
-        //StartCoroutine(MovingPlatforms());
     }
-
-    //private void OnTriggerEnter(Collider other)
-    //{
-    //    if(other.CompareTag("Player"))
-    //    {
-            
-    //        ShowMoves();
-    //    }
-    //}
 
     Vector3Int RandomVector()
     {
-        int r = UnityEngine.Random.Range(0, 3);
-        Vector3Int vec = MainManager.Instance.VectorShow(transform.position + directions[r]);
-        if (vec == Vector3Int.zero) 
+        int r = Random.Range(0, 3);
+        Vector3Int vec = Vector3Int.FloorToInt(transform.position + directions[r]);
+        if (MainManager.Instance.IsContainsVector(vec)) // если уже были там, повторяем ещё раз
         {
-            return RandomVector();                      // если нули, повторяем ещё раз
+            return RandomVector();                      
         }
-        MainManager.Instance.AddPos(vec);
-        SetRotation(r);
-        return vec;
+        MainManager.Instance.AddPos(vec); // добавляем в массив - по этим координатам можем ходить
+        rotationToMake = SetRotation(r);
+        return vec; 
     }
-
-    void SetRotation(int r)
-    {
-        switch (r)
-        {
-            case 0:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x + 90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                break;
-            case 1:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z + 90);
-                break;
-            case 2:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z - 90);
-                break;
-            case 3:
-                rotationToMake = Quaternion.Euler(transform.rotation.eulerAngles.x - 90, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-                break;
-        }
-        //Debug.Log(r);
-    }
-
     IEnumerator Move()
     {
         while(isMoving)
