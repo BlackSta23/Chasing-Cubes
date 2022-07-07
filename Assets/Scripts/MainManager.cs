@@ -31,24 +31,6 @@ public class MainManager : MonoBehaviour
         else
             return false;
     }
-    //public Vector3Int VectorMine(Vector3 pos)
-    //{
-    //    Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
-    //    if (!positions.Contains(vec))
-    //        return Vector3Int.zero;             // если в массиве нет такого вектора, возвращаем нули
-    //    else
-    //        return vec;                         // если есть, возвращаем вектор в виде Vector3Int
-    //}
-
-    //public Vector3Int VectorShow(Vector3 pos)
-    //{
-    //    Vector3Int vec = new Vector3Int(System.Convert.ToInt32(pos.x), 1, System.Convert.ToInt32(pos.z));
-    //    if (positions.Contains(vec))
-    //        return Vector3Int.zero;             // для другого кубика делаем наоборот
-    //    else
-    //        return vec;        
-    //}
-
     private void Awake()
     {
         if (Instance != null)
